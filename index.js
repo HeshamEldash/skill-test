@@ -14,7 +14,19 @@ const Joi = require("joi");
 // updatedAt: optional, string. must be a valid date in ISO 8601 format. defaults to null, automatically set whenever a Job entity is updated.
 
 
-const jobs = []
+let jobs = [
+  {
+    id: "8cbdd2b0-7055-40d3-8f2d-ba9b38fb3d1e",
+    type: "ON_DEMAND",
+    priceInPence: "10000",
+    contactEmail: "test@test.com",
+    status: "ASSIGNED",
+    createdAt: new Date().toISOString(),
+    updatedAt: null
+  },
+]
+
+
 
 const jobSchema = Joi.object({
   id: Joi.string().guid({
@@ -53,7 +65,7 @@ const init = async () => {
   }
 };
 
-init();
+// init();
 
 //TODO 1: **Endpoint**: `/jobs/{id} - GET`
 // This endpoint should return a single Job, matching by the ID specified as a route parameter.
