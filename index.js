@@ -13,7 +13,6 @@ const Joi = require("joi");
 // createdAt: required, string. must be a valid date in ISO 8601 format. automatically set when a Job entity is created.
 // updatedAt: optional, string. must be a valid date in ISO 8601 format. defaults to null, automatically set whenever a Job entity is updated.
 
-
 let jobs = [
   {
     id: "8cbdd2b0-7055-40d3-8f2d-ba9b38fb3d1e",
@@ -21,12 +20,19 @@ let jobs = [
     priceInPence: "10000",
     contactEmail: "test@test.com",
     status: "ASSIGNED",
-    createdAt: new Date().toISOString(),
-    updatedAt: null
+    createdAt: new Date("2020-06-01").toISOString(),
+    updatedAt: null,
   },
-]
-
-
+  {
+    id: "8cbdd2b0-7055-40d3-8f2d-ba9b38fb3d1e",
+    type: "ON_DEMAND",
+    priceInPence: "10000",
+    contactEmail: "test@test.com",
+    status: "ASSIGNED",
+    createdAt: new Date("2019-06-01").toISOString(),
+    updatedAt: null,
+  },
+];
 
 const jobSchema = Joi.object({
   id: Joi.string().guid({
@@ -37,23 +43,44 @@ const jobSchema = Joi.object({
   contactEmail: Joi.string().email().optional(),
   status: Joi.string().valid("AVAILABLE", "ASSIGNED", "COMPLETED"),
   createdAt: Joi.date().iso(),
-  updatedAt: Joi.date().iso().optional().default(null)
+  updatedAt: Joi.date().iso().optional().default(null),
 });
-
-
 
 const server = Hapi.server({
   port: 3000,
   host: "localhost",
 });
 
+
+//Get Job By Id
 server.route({
   method: "GET",
-  path: "/",
+  path: "/jobs/{id}",
   handler: (request, h) => {
-    return "Hello World!";
+
+    // find the job 
+    const job = jobs.find(job => job.id === request.params.id)
+    console.log(request.params.id)
+
+    // handle job not found
+    if (job === undefined) return h.response("No Job With This ID Was Found").code(404)
+    
+    return job;
+  },
+})
+
+// Get All Jobs...
+server.route({
+  method: "GET",
+  path: "/jobs",
+  handler: (request, h) => {
+    // sort array, new jobs first
+    jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return jobs;
   },
 });
+
+
 
 const init = async () => {
   try {
@@ -65,7 +92,7 @@ const init = async () => {
   }
 };
 
-// init();
+init();
 
 //TODO 1: **Endpoint**: `/jobs/{id} - GET`
 // This endpoint should return a single Job, matching by the ID specified as a route parameter.
