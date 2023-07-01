@@ -1,17 +1,6 @@
-const Hapi = require("@hapi/hapi");
-const Joi = require("joi");
-
-// ## Job Entity
-
-//id: required, string. must be a valid UUID (v4).
-// type: required, string. must be one of 'ON_DEMAND', 'SHIFT' or 'SCHEDULED'.
-// priceInPence: required, integer. can be zero, but cannot be negative.
-
-// contactEmail: optional, string. must be a valid email if provided.
-// status: required, string. must be one of 'AVAILABLE', 'ASSIGNED' or 'COMPLETED'.
-
-// createdAt: required, string. must be a valid date in ISO 8601 format. automatically set when a Job entity is created.
-// updatedAt: optional, string. must be a valid date in ISO 8601 format. defaults to null, automatically set whenever a Job entity is updated.
+import { v4 as uuidv4 } from "uuid";
+import Hapi from "@hapi/hapi";
+import Joi from "joi";
 
 let jobs = [
   {
@@ -24,7 +13,7 @@ let jobs = [
     updatedAt: null,
   },
   {
-    id: "8cbdd2b0-7055-40d3-8f2d-ba9b38fb3d1e",
+    id: "8cbdd2b0-7055-40d3-8f2d-ba9b38fb3e1e",
     type: "ON_DEMAND",
     priceInPence: "10000",
     contactEmail: "test@test.com",
@@ -34,39 +23,63 @@ let jobs = [
   },
 ];
 
-const jobSchema = Joi.object({
-  id: Joi.string().guid({
-    version: "uuidv4",
-  }),
-  type: Joi.string().valid("ON_DEMAND", "SHIFT", "SCHEDULED"),
-  priceInPence: Joi.number().positive(),
-  contactEmail: Joi.string().email().optional(),
-  status: Joi.string().valid("AVAILABLE", "ASSIGNED", "COMPLETED"),
-  createdAt: Joi.date().iso(),
-  updatedAt: Joi.date().iso().optional().default(null),
-});
-
 const server = Hapi.server({
   port: 3000,
   host: "localhost",
 });
 
+//Create new job
+server.route({
+  method: "POST",
+  path: "/jobs/",
+  handler: (request, h) => {
+    // Validate request
+
+    const jobSchema = Joi.object({
+      type: Joi.string().valid("ON_DEMAND", "SHIFT", "SCHEDULED").required(),
+      priceInPence: Joi.number().positive().required(),
+      contactEmail: Joi.string().email().optional().optional(),
+      status: Joi.string()
+        .valid("AVAILABLE", "ASSIGNED", "COMPLETED")
+        .required(),
+    });
+
+    const { error } = jobSchema.validate(request.payload);
+    if (error) return h.response(error.message).code(400);
+
+    // Create the new job
+    const newJob = {
+      id: uuidv4(),
+      type: request.payload.type,
+      priceInPence: request.payload.priceInPence,
+      contactEmail: request.payload.contactEmail,
+      status: request.payload.status,
+      createdAt: new Date().toISOString(),
+      updatedAt: null,
+    };
+
+    // append to existing jobs
+    jobs.push(newJob);
+
+    return JSON.stringify(newJob);
+  },
+});
 
 //Get Job By Id
 server.route({
   method: "GET",
   path: "/jobs/{id}",
   handler: (request, h) => {
-
-    // find the job 
-    const job = jobs.find(job => job.id === request.params.id)
+    // find the job
+    const job = jobs.find((job) => job.id === request.params.id);
 
     // handle job not found
-    if (job === undefined) return h.response("No Job With This ID Was Found").code(404)
-    
+    if (job === undefined)
+      return h.response("No Job With This ID Was Found").code(404);
+
     return JSON.stringify(job);
   },
-})
+});
 
 //Update Job
 server.route({
@@ -77,30 +90,48 @@ server.route({
 
     const jobUpdateSchema = Joi.object({
       contactEmail: Joi.string().email().optional(),
-      status: Joi.string().valid("AVAILABLE", "ASSIGNED", "COMPLETED").required(),
+      status: Joi.string()
+        .valid("AVAILABLE", "ASSIGNED", "COMPLETED")
+        .required(),
     });
-    const {error} = jobUpdateSchema.validate(request.payload)
+    const { error } = jobUpdateSchema.validate(request.payload);
 
-    if (error) return h.response(error.message).code(400)
+    if (error) return h.response(error.message).code(400);
 
-
-
-    const job = jobs.find(job => job.id === request.params.id)
+    const job = jobs.find((job) => job.id === request.params.id);
     // handle job not found
-    if (job === undefined) return h.response("No Job With This ID Was Found").code(404)
-    
+    if (job === undefined)
+      return h.response("No Job With This ID Was Found").code(404);
 
     // Update the job
-    job.contactEmail = request.payload.contactEmail
-    job.status = request.payload.status
-    job.updatedAt = new Date().toISOString()
+    job.contactEmail = request.payload.contactEmail;
+    job.status = request.payload.status;
+    job.updatedAt = new Date().toISOString();
 
-    
     return JSON.stringify(job);
   },
-})
+});
 
+//Delete job
+server.route({
+  method: "DELETE",
+  path: "/jobs/{id}",
+  handler: (request, h) => {
+    // find the job
+    const job = jobs.find((job) => job.id === request.params.id);
 
+    // handle job not found
+    if (job === undefined)
+      return h.response("No Job With This ID Was Found").code(404);
+
+    // Remove the deleted job from the jobs array
+    jobs = jobs.filter((job) => {
+      return job.id != request.params.id;
+    });
+
+    return jobs;
+  },
+});
 
 // Get All Jobs...
 server.route({
@@ -112,8 +143,6 @@ server.route({
     return jobs;
   },
 });
-
-
 
 const init = async () => {
   try {
@@ -127,19 +156,10 @@ const init = async () => {
 
 init();
 
-//TODO 1: **Endpoint**: `/jobs/{id} - GET`
-// This endpoint should return a single Job, matching by the ID specified as a route parameter.
-
-//TODO 2: ### Update Job by ID
-// **Endpoint**: `/jobs/{id} - PATCH`
-// This endpoint should parse incoming JSON data and update an existing Job entity, returning it in the response.
-// The incoming JSON payload should be as follows:
-// ```
-// contactEmail: optional, string. must be a valid email if provided.
-// status: required, string. must be one of 'AVAILABLE', 'ASSIGNED' or 'COMPLETED'.
-// ```
-// Only the `contactEmail` and `status` attributes can be updated. The `updatedAt` should be updated if an update takes place.
-
-//TODO 3 : ### Delete Job by ID
-// **Endpoint**: `/jobs/{id} - DELETE`
-// This endpoint should delete a Job from the in-memory store, matching by the ID specified as a route parameter.
+//TODO: List Jobs
+//TODO: Create a New Job
+//TODO: Get Job by ID
+//TODO: Update Job by ID
+//TODO: Delete Job by ID
+//TODO: Tests
+//TODO:
