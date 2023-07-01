@@ -105,11 +105,45 @@ describe("/jobs/", () => {
               status: "a",
           }
         });
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(400);
       });
 
 
   });
+
+  describe("DELETE /:id", () => {
+    it("should delete a job if valid id is provided", async () => {
+        const testJob = {
+            id: "8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
+            type: "ON_DEMAND",
+            priceInPence: "10000",
+            contactEmail: "test@test.com",
+            status: "ASSIGNED",
+            createdAt: new Date("2020-06-01").toISOString(),
+            updatedAt: null,
+          };
+          jobs.push(testJob);
+    
+
+      const res = await server.inject({
+        method: "delete",
+        url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
+      });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.result).not.toContain(testJob);
+    });
+
+    it("should return 404 if job is not found", async () => {
+      const res = await server.inject({
+        method: "delete",
+        url: "/jobs/8cbdd",
+      });
+      expect(res.statusCode).toBe(404);
+    });
+
+  });
+
 
 
 });
