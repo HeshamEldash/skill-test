@@ -60,14 +60,47 @@ server.route({
 
     // find the job 
     const job = jobs.find(job => job.id === request.params.id)
-    console.log(request.params.id)
 
     // handle job not found
     if (job === undefined) return h.response("No Job With This ID Was Found").code(404)
     
-    return job;
+    return JSON.stringify(job);
   },
 })
+
+//Update Job
+server.route({
+  method: "PATCH",
+  path: "/jobs/{id}",
+  handler: (request, h) => {
+    // validate incoming request
+
+    const jobUpdateSchema = Joi.object({
+      contactEmail: Joi.string().email().optional(),
+      status: Joi.string().valid("AVAILABLE", "ASSIGNED", "COMPLETED").required(),
+    });
+    const {error} = jobUpdateSchema.validate(request.payload)
+
+    if (error) return h.response(error.message).code(400)
+
+
+
+    const job = jobs.find(job => job.id === request.params.id)
+    // handle job not found
+    if (job === undefined) return h.response("No Job With This ID Was Found").code(404)
+    
+
+    // Update the job
+    job.contactEmail = request.payload.contactEmail
+    job.status = request.payload.status
+    job.updatedAt = new Date().toISOString()
+
+    
+    return JSON.stringify(job);
+  },
+})
+
+
 
 // Get All Jobs...
 server.route({
