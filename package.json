@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "DocAbode Test",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll --verbose"
   },
   "author": "Hesham Eldash",
   "license": "ISC",
@@ -14,5 +13,8 @@
     "joi": "^17.9.2",
     "nodemon": "^2.0.22",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }

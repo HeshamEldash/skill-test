@@ -1,6 +1,9 @@
-import { v4 as uuidv4 } from "uuid";
-import Hapi from "@hapi/hapi";
-import Joi from "joi";
+const { v4: uuidv4 } = require('uuid');
+const Hapi = require('@hapi/hapi');
+const Joi = require("joi")
+
+
+
 
 let jobs = [
   {
@@ -136,7 +139,7 @@ server.route({
 // Get All Jobs...
 server.route({
   method: "GET",
-  path: "/jobs",
+  path: "/jobs/",
   handler: (request, h) => {
     // sort array, new jobs first
     jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -144,22 +147,34 @@ server.route({
   },
 });
 
-const init = async () => {
+init = async () => {
   try {
-    await server.start();
-    console.log(`server running on ${server.info.uri}`);
+    await server.initialize();
+    console.log(`server intialized`);
+    return server
   } catch (err) {
     console.log("An error has occured when starting the server");
     console.log(err);
   }
 };
 
-init();
+ start = async () => {
+  try {
+    await server.start();
+    console.log(`server running on ${server.info.uri}`);
+    return server
 
-//TODO: List Jobs
-//TODO: Create a New Job
-//TODO: Get Job by ID
-//TODO: Update Job by ID
-//TODO: Delete Job by ID
+  } catch (err) {
+    console.log("An error has occured when starting the server");
+    console.log(err);
+  }
+};
+
+
+exports.jobs = jobs
+exports.init = init
+// start();
+
+
 //TODO: Tests
 //TODO:
