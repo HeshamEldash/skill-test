@@ -1,7 +1,7 @@
 {
-  "name": "dockabode",
+  "name": "techtest",
   "version": "1.0.0",
-  "description": "DocAbode Test",
+  "description": "Tech Test",
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose"
