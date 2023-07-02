@@ -1,16 +1,19 @@
-let { init, jobs } = require("../index.js");
+let { init } = require("../server.js");
+let { jobs } = require("../routes.js");
 
 describe("/jobs/", () => {
   let server;
-  let oldJobList;
+  let originalJobList;
 
   beforeEach(async () => {
-    oldJobList = jobs;
+    originalJobList = jobs;
     server = await init();
   });
 
   afterEach(async () => {
-    jobs = oldJobList;
+    // restore the job list to it's original state before the tests
+    jobs = originalJobList;
+
     await server.stop();
   });
 
