@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose",
-    "dev":"node index.js",
+    "dev": "node index.js",
     "start": "node index.js"
   },
   "author": "Hesham Eldash",
@@ -13,10 +13,10 @@
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
     "joi": "^17.9.2",
-    "nodemon": "^2.0.22",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22"
   }
 }
