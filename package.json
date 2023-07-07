@@ -4,6 +4,7 @@
   "description": "Tech Test",
   "main": "index.js",
   "scripts": {
+    "test:coverage": "jest --coverage",
     "test": "jest --watchAll --verbose",
     "dev": "cross-env nodemon index.js",
     "start": "cross-env node index.js"
