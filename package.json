@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose",
-    "dev": "node index.js",
-    "start": "node index.js"
+    "dev": "cross-env node index.js",
+    "start": "cross-env node index.js"
   },
   "author": "Hesham Eldash",
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
+    "cross-env": "^7.0.3",
     "joi": "^17.9.2",
     "uuid": "^9.0.0"
   },
