@@ -4,7 +4,9 @@
   "description": "Tech Test",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --verbose"
+    "test": "jest --watchAll --verbose",
+    "dev":"node index.js",
+    "start": "node index.js"
   },
   "author": "Hesham Eldash",
   "license": "ISC",
