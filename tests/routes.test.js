@@ -129,7 +129,7 @@ describe("/jobs/", () => {
         url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
       });
       
-      expect(res.statusCode).toBe(204);
+      expect(res.statusCode).toBe(204);q
     });
 
     it("should return 404 if job is not found", async () => {
