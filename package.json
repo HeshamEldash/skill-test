@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll --verbose",
-    "dev": "cross-env node index.js",
+    "dev": "cross-env nodemon index.js",
     "start": "cross-env node index.js"
   },
   "author": "Hesham Eldash",
