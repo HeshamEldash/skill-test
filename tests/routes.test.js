@@ -1,5 +1,7 @@
 let { init } = require("../server.js");
 let { jobs } = require("../routes.js");
+const { createData }= require('../utils/testhelper.js');
+
 
 describe("/jobs/", () => {
   let server;
@@ -31,15 +33,7 @@ describe("/jobs/", () => {
 
   describe("GET /:id", () => {
     it("should return a job if valid id is provided", async () => {
-      const testJob = {
-        id: "8cbdd2b0-7055-40d3-8f2d-ba9b38gb3d1e",
-        type: "ON_DEMAND",
-        priceInPence: "10000",
-        contactEmail: "test@test.com",
-        status: "ASSIGNED",
-        createdAt: new Date("2020-06-01").toISOString(),
-        updatedAt: null,
-      };
+      const testJob = createData();
       jobs.push(testJob);
 
       const res = await server.inject({
@@ -56,26 +50,19 @@ describe("/jobs/", () => {
         method: "get",
         url: "/jobs/8cbdd",
       });
+
       expect(res.statusCode).toBe(404);
     });
   });
 
   describe("PATCH /:id", () => {
     it("should update a job if valid id, email & status are provided", async () => {
-      const testJob = {
-        id: "8cbdd2b0-7055-40d3-8f2d-ba9b38gbb31p",
-        type: "ON_DEMAND",
-        priceInPence: "10000",
-        contactEmail: "test@test.com",
-        status: "ASSIGNED",
-        createdAt: new Date("2020-06-01").toISOString(),
-        updatedAt: null,
-      };
+      const testJob = createData();
       jobs.push(testJob);
 
       const res = await server.inject({
         method: "patch",
-        url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gbb31p",
+        url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gb3d1e",
         payload: {
           contactEmail: "test2@test.com",
           status: "ASSIGNED",
@@ -95,6 +82,7 @@ describe("/jobs/", () => {
           status: "ASSIGNED",
         },
       });
+
       expect(res.statusCode).toBe(404);
     });
 
@@ -107,26 +95,19 @@ describe("/jobs/", () => {
           status: "a",
         },
       });
+
       expect(res.statusCode).toBe(400);
     });
   });
 
   describe("DELETE /:id", () => {
     it("should delete a job if valid id is provided", async () => {
-      const testJob = {
-        id: "8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
-        type: "ON_DEMAND",
-        priceInPence: "10000",
-        contactEmail: "test@test.com",
-        status: "ASSIGNED",
-        createdAt: new Date("2020-06-01").toISOString(),
-        updatedAt: null,
-      };
+      const testJob = createData();;
       jobs.push(testJob);
 
       const res = await server.inject({
         method: "delete",
-        url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
+        url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gb3d1e",
       });
       
       expect(res.statusCode).toBe(204);
@@ -137,6 +118,7 @@ describe("/jobs/", () => {
         method: "delete",
         url: "/jobs/8cbdd",
       });
+
       expect(res.statusCode).toBe(404);
     });
   });
@@ -169,6 +151,7 @@ describe("/jobs/", () => {
           status: "a",
         },
       });
+      
       expect(res.statusCode).toBe(400);
     });
   });
