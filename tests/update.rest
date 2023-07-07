@@ -1,0 +1,6 @@
+PATCH http://localhost:3000/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38fb3e1e
+Content-Type: application/json
+
+{
+    "status": "AVAILABLE"
+}

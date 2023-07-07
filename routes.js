@@ -125,7 +125,7 @@ server.route({
       return job.id != request.params.id;
     });
 
-    return jobs;
+    return h.response('job deleted').code(204);
   },
 });
 
