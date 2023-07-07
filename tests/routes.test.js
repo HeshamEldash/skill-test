@@ -128,9 +128,8 @@ describe("/jobs/", () => {
         method: "delete",
         url: "/jobs/8cbdd2b0-7055-40d3-8f2d-ba9b38gbb391",
       });
-
-      expect(res.statusCode).toBe(200);
-      expect(res.result).not.toContain(testJob);
+      
+      expect(res.statusCode).toBe(204);
     });
 
     it("should return 404 if job is not found", async () => {
